@@ -1,0 +1,14 @@
+<robo4j>
+    <roboUnit id="gpsPointUnit">
+        <class>com.robo4j.example.traveler.unit.GpsPointUnit</class>
+        <config name="com.robo4j.root">
+        </config>
+    </roboUnit>
+
+    <roboUnit id="travelerUnit">
+        <class>com.robo4j.example.traveler.unit.TravelerUnit</class>
+        <config name="com.robo4j.root">
+            <value name="travelerService" type="String">travelerService</value>
+        </config>
+    </roboUnit>
+</robo4j>

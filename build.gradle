@@ -1,0 +1,55 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:2.0.0.RELEASE")
+    }
+}
+
+group 'com.robo4j.example.spring'
+
+apply plugin: 'java'
+apply plugin: 'idea'
+apply plugin: 'maven'
+apply from: 'libraries.gradle'
+
+apply from: 'libraries.gradle'
+
+version "${exampleVersion}"
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+jar {
+    baseName = 'gs-messaging-stomp-websocket'
+    version = '0.1.0'
+}
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+    maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = "${gradleVersion}"
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include : 'gpx-parser-1.2.jar')
+    compile "com.robo4j:robo4j-spring:${robo4jVersion}"
+    compile "org.yaml:snakeyaml:${snakeYamlVersion}"
+    compile "org.springframework.boot:spring-boot-starter-web:${springBootStarterWebVersion}"
+    compile("org.springframework.boot:spring-boot-starter-actuator:${springBootStarterWebVersion}")
+    compile "org.springframework.boot:spring-boot-starter-freemarker:${springBootStarterWebVersion}"
+    compile "org.springframework.boot:spring-boot-starter-websocket:${springBootStarterWebVersion}"
+    compile "org.webjars:webjars-locator-core:${webjarsCoreVersion}"
+    compile "org.webjars:sockjs-client:${webjarsSockjsVersion}"
+    compile "org.webjars:stomp-websocket:${webjarsStompVersion}"
+    compile "org.webjars:bootstrap:${webjarsBootstrapVersion}"
+    compile "org.webjars:jquery:${webjarsJqueryVersion}"
+    compileOnly "org.projectlombok:lombok:${lombokVersion}"
+    testCompile "org.springframework.boot:spring-boot-starter-test:${springBootStarterWebVersion}"
+    testCompile "junit:junit:${junitVersion}@jar"
+}
