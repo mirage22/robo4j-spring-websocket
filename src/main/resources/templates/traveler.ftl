@@ -1,7 +1,7 @@
 <#include "header.ftl">
 <div id="map" style="height:484px;"></div>
 <!-- Replace the value of the key parameter with your own API key. -->
-<script type="text/javascript" src="http://maps.google.com/maps/api/js?key=AIzaSyA4cD6KQsuPnuYqwhITc5HHgNMuHjUe8qc"></script>
+<script type="text/javascript" src="http://maps.google.com/maps/api/js?key=<GOOGLE MAPs API KEY>"></script>
 <script>
     $(document).ready(function(){
         initMap();

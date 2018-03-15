@@ -37,7 +37,7 @@ import java.util.Map;
 @Service
 public class Robo4JServiceImpl implements Robo4JService {
 
-    private static final int DURATION_SECONDS = 50;
+    private static final int DURATION_SECONDS = 1;
     private static final String ROBO4J_TRAVELER_XML = "robo4j_traveler.xml";
     private final TravelerService travelerService;
     private RoboContext roboSystem;

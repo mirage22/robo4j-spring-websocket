@@ -29,8 +29,6 @@ import com.robo4j.example.traveler.model.GpsConfigMessage;
 import java.io.InputStream;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author Marcus Hirt (@hirt)
@@ -39,9 +37,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class GpsPointUnit extends RoboUnit<GpsConfigMessage> {
     public static final String NAME = "gpsPointUnit";
     private List<GpsPoint> points;
-
-    private AtomicInteger position = new AtomicInteger(0);
-    private AtomicBoolean forward = new AtomicBoolean(true);
+    private int position = 0;
+    private boolean forward = true;
 
     public GpsPointUnit(RoboContext context, String id) {
         super(GpsConfigMessage.class, context, id);
@@ -76,25 +73,28 @@ public class GpsPointUnit extends RoboUnit<GpsConfigMessage> {
     }
 
     private void readGpsPoint() {
+        System.out.println(getClass().getSimpleName() + ":position:" + position + " and state: " + forward + ":size:" + points.size());
 
-        GpsPoint point = points.get(position.get());
-        System.out.println(getClass().getSimpleName() + ":size:" + point + ":position:" + position);
+        if (position == 8888) {
+            System.out.println("STATUS");
+        }
+        GpsPoint point = points.get(position);
         getContext().getReference(TravelerUnit.NAME).sendMessage(point);
 
-        if (position.get() == points.size() && forward.get()) {
-            forward.set(false);
-        } else if (position.get() == 0 && !forward.get()) {
-            forward.set(true);
-        }
-        System.out.println(getClass().getSimpleName() + "position and state: " + forward);
 
-        if (forward.get()) {
-            position.incrementAndGet();
+        if (forward) {
+            ++position;
         } else {
-            position.decrementAndGet();
+            --position;
         }
-        System.out.println(getClass().getSimpleName() + ":position:" + position + " and state: " + forward);
-        System.out.println(getClass().getSimpleName() + ":size:" + points.size());
+
+        if (position % points.size() == 0) {
+            System.out.println(getClass().getSimpleName() + ":change1:" + forward);
+            forward = !forward;
+            position = forward ? ++position : --position;
+            System.out.println(getClass().getSimpleName() + ":change2:" + forward);
+        }
+
 
     }
 }
