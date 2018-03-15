@@ -1,3 +1,20 @@
+/*
+ * Copyright (c) 2014, 2018, Marcus Hirt, Miroslav Wengner
+ *
+ * Robo4J is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Robo4J is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Robo4J. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package com.robo4j.example.traveler.unit;
 
 import com.robo4j.ConfigurationException;
@@ -12,6 +29,8 @@ import com.robo4j.example.traveler.model.GpsConfigMessage;
 import java.io.InputStream;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author Marcus Hirt (@hirt)
@@ -21,8 +40,8 @@ public class GpsPointUnit extends RoboUnit<GpsConfigMessage> {
     public static final String NAME = "gpsPointUnit";
     private List<GpsPoint> points;
 
-    private int position;
-    private boolean forward = true;
+    private AtomicInteger position = new AtomicInteger(0);
+    private AtomicBoolean forward = new AtomicBoolean(true);
 
     public GpsPointUnit(RoboContext context, String id) {
         super(GpsConfigMessage.class, context, id);
@@ -53,25 +72,29 @@ public class GpsPointUnit extends RoboUnit<GpsConfigMessage> {
     @Override
     public void onMessage(GpsConfigMessage message) {
         getContext().getScheduler().scheduleAtFixedRate(this::readGpsPoint, 0,
-                message.getSampling(), TimeUnit.SECONDS);
+                message.getSampling(), TimeUnit.MILLISECONDS);
     }
 
     private void readGpsPoint() {
-        GpsPoint point = points.get(position);
-        System.out.println(getClass().getSimpleName() + ":point:" + point + ":position:" + position);
+
+        GpsPoint point = points.get(position.get());
+        System.out.println(getClass().getSimpleName() + ":size:" + point + ":position:" + position);
         getContext().getReference(TravelerUnit.NAME).sendMessage(point);
 
-        if (position == points.size() && forward) {
-            forward = false;
-        } else if (position == 0 && !forward) {
-            forward = true;
+        if (position.get() == points.size() && forward.get()) {
+            forward.set(false);
+        } else if (position.get() == 0 && !forward.get()) {
+            forward.set(true);
         }
+        System.out.println(getClass().getSimpleName() + "position and state: " + forward);
 
-        if(forward){
-            ++position;
+        if (forward.get()) {
+            position.incrementAndGet();
         } else {
-            --position;
+            position.decrementAndGet();
         }
+        System.out.println(getClass().getSimpleName() + ":position:" + position + " and state: " + forward);
+        System.out.println(getClass().getSimpleName() + ":size:" + points.size());
 
     }
 }
