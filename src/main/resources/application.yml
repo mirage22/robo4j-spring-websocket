@@ -1,3 +1,5 @@
+server:
+  port: 8080
 application:
-    title: Robo Traveler
-    description: Websocket example powered by Robo4J and Spring
+  title: Robo Traveler
+  description: Websocket Google Maps example

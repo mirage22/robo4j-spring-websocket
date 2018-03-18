@@ -25,10 +25,12 @@ import com.robo4j.example.traveler.unit.GpsPointUnit;
 import com.robo4j.example.traveler.unit.TravelerUnit;
 import com.robo4j.spring.RoboSpringRegisterUnit;
 import com.robo4j.util.PropertyMapBuilder;
+import com.robo4j.util.SystemUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author Marcus Hirt (@hirt)
@@ -55,6 +57,12 @@ public class Robo4JServiceImpl implements Robo4JService {
         RoboReference<GpsConfigMessage> gpsPointRef = roboSystem.getReference(GpsPointUnit.NAME);
         GpsConfigMessage message = new GpsConfigMessage(DURATION_SECONDS);
         gpsPointRef.sendMessage(message);
+
+        roboSystem.getScheduler().schedule(() -> {
+            roboSystem.shutdown();
+            System.out.println("RoboSystem shutdown :");
+            System.out.println(SystemUtil.printStateReport(roboSystem));
+        }, 10, TimeUnit.SECONDS);
     }
 
 

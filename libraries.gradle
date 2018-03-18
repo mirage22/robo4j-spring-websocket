@@ -16,7 +16,7 @@
  */
 
 ext {
-    exampleVersion = "0.0.1-SNAPSHOT"
+    exampleVersion = "0.1-SNAPSHOT"
     robo4jVersion = "alpha-0.3.9-SNAPSHOT"
     springBootStarterWebVersion = "2.0.0.RELEASE"
     webjarsCoreVersion = "0.35"

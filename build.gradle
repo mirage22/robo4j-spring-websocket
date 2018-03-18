@@ -18,29 +18,33 @@
 buildscript {
     repositories {
         mavenCentral()
+        jcenter()
     }
     dependencies {
-        classpath("org.springframework.boot:spring-boot-gradle-plugin:2.0.0.RELEASE")
+        classpath "org.springframework.boot:spring-boot-gradle-plugin:2.0.0.RELEASE"
+        classpath 'se.transmode.gradle:gradle-docker:1.2'
     }
 }
 
 group 'com.robo4j.example.spring'
 
+apply plugin: 'application'
+apply plugin: 'docker'
 apply plugin: 'java'
 apply plugin: 'idea'
 apply plugin: 'maven'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'io.spring.dependency-management'
 apply from: 'libraries.gradle'
 
 apply from: 'libraries.gradle'
 
 version "${exampleVersion}"
 
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
-
-jar {
-    baseName = 'gs-messaging-stomp-websocket'
-    version = '0.1.0'
+compileJava {
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+    mainClassName = "com.robo4j.example.traveler.RoboTravelerMain"
 }
 
 repositories {
@@ -49,9 +53,26 @@ repositories {
     maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
 }
 
+docker {
+    baseImage  "openjdk:8-jdk-alpine"
+}
+
+distDocker {
+    exposePort 8080
+}
+
 task wrapper(type: Wrapper) {
     gradleVersion = "${gradleVersion}"
 }
+
+task demoImageDocker(type: Docker){
+    applicationName = 'robo4j-spring-websocket'
+    tagVersion = "${exampleVersion}"
+    addFile("./build/libs/robo4j-spring-websocket-${exampleVersion}.jar", "app.jar")
+    exposePort(8080)
+    defaultCommand(["java", "-jar", "app.jar"])
+}
+
 
 dependencies {
     compile fileTree(dir: 'libs', include : 'gpx-parser-1.2.jar')
